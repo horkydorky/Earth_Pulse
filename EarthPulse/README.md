@@ -20,7 +20,8 @@ An interactive visualization platform for environmental and geographic data anal
 [▶️ Watch Demo Video](assets/screenshots/demo.mp4)
 
 ### Screenshots
-<img width="1354" height="738" alt="{59A2F821-07B7-44F9-9B21-1C18B02F0C8A}" src="https://github.com/user-attachments/assets/f7ab6410-b438-4920-95df-b7f3e5cec0d9" />
+<img width="1451" height="769" alt="{85CDEA41-4C32-4F6D-B65F-5FED5A39B243}" src="https://github.com/user-attachments/assets/d2a2d623-52e3-4c0c-8901-b272a698f2cc" />
+
 
 
 
