@@ -23,16 +23,17 @@ An interactive visualization platform for environmental and geographic data anal
 <img width="1354" height="738" alt="{59A2F821-07B7-44F9-9B21-1C18B02F0C8A}" src="https://github.com/user-attachments/assets/f7ab6410-b438-4920-95df-b7f3e5cec0d9" />
 
 
-![Screenshot 1](assets/screenshots/img1.png)
 
 
-![Screenshot 2](assets/screenshots/img2.png)
+<img width="1162" height="569" alt="{BE58627F-F274-402B-8906-F11309DE4D63}" src="https://github.com/user-attachments/assets/16b9f7a2-a803-4017-91b3-3e6a73c8ec8e" />
 
 
-![Screenshot 3](assets/screenshots/img3.png)
+
+<img width="1171" height="632" alt="{81E0F3B7-911B-43E4-96B8-6D6D4C5AC7D7}" src="https://github.com/user-attachments/assets/a701e175-b0b8-481f-81c3-9f5711e1caa8" />
 
 
-![Screenshot 4](assets/screenshots/img4.png)
+<img width="1294" height="760" alt="{B02B7FE6-69E1-497E-89FE-D95FFA170453}" src="https://github.com/user-attachments/assets/65f29d88-dbe9-4e41-ba19-9a8a7b2bc9bc" />
+
 
 ## Tech Stack
 
