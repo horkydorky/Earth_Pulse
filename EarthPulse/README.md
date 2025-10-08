@@ -29,8 +29,8 @@ An interactive visualization platform for environmental and geographic data anal
 <img width="1162" height="569" alt="{BE58627F-F274-402B-8906-F11309DE4D63}" src="https://github.com/user-attachments/assets/16b9f7a2-a803-4017-91b3-3e6a73c8ec8e" />
 
 
+<img width="1505" height="784" alt="{501A776E-40CE-4845-A661-F8B6B3241269}" src="https://github.com/user-attachments/assets/1be7d047-ef23-43d2-928f-c86b391e7b0b" />
 
-<img width="1171" height="632" alt="{81E0F3B7-911B-43E4-96B8-6D6D4C5AC7D7}" src="https://github.com/user-attachments/assets/a701e175-b0b8-481f-81c3-9f5711e1caa8" />
 
 
 <img width="1294" height="760" alt="{B02B7FE6-69E1-497E-89FE-D95FFA170453}" src="https://github.com/user-attachments/assets/65f29d88-dbe9-4e41-ba19-9a8a7b2bc9bc" />
