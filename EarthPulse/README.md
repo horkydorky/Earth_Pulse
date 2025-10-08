@@ -59,7 +59,7 @@ An interactive visualization platform for environmental and geographic data anal
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate  # On Windows: .\venv\Scripts\activate
+On Windows: .\venv\Scripts\activate
 pip install -r requirements.txt
 python run_dev.py
 ```
