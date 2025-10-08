@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earth Observation Visualizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1e3a8a 50%, #7c3aed 100%);
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-bottom: 1px solid #0ea5e9;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .main-container {
+            display: flex;
+            height: calc(100vh - 80px);
+        }
+
+        .sidebar {
+            width: 300px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-right: 1px solid #0ea5e9;
+        }
+
+        .dashboard {
+            flex: 1;
+            position: relative;
+            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.05"><circle cx="30" cy="30" r="1"/></g></g></svg>');
+        }
+
+        .map-container {
+            position: relative;
+            height: 60%;
+            background: linear-gradient(45deg, #1a365d 0%, #2d3748 50%, #1a202c 100%);
+            margin: 20px;
+            border-radius: 10px;
+            border: 2px solid #0ea5e9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .time-slider {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-radius: 20px;
+            border: 1px solid #0ea5e9;
+            min-width: 400px;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .year-display {
+            background: rgba(14, 165, 233, 0.2);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .slider {
+            flex: 1;
+            height: 8px;
+            background: linear-gradient(90deg, #10b981 0%, #0ea5e9 50%, #f59e0b 100%);
+            border-radius: 4px;
+            outline: none;
+            appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #0ea5e9;
+            border: 2px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+        }
+
+        .indicators {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .indicator-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .indicator-card:hover {
+            border-color: #0ea5e9;
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+            transform: scale(1.02);
+        }
+
+        .indicator-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .indicator-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .indicator-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .indicator-trend {
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .trend-up {
+            color: #ef4444;
+        }
+
+        .trend-down {
+            color: #10b981;
+        }
+
+        .map-info {
+            text-align: center;
+        }
+
+        .globe-icon {
+            font-size: 4rem;
+            margin-bottom: 10px;
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #0ea5e9;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(14, 165, 233, 0.2);
+        }
+
+        .year-info {
+            position: absolute;
+            top: 20px;
+            left: 32%;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #0ea5e9;
+        }
+
+        .loading {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(14, 165, 233, 0.3);
+            border-top: 4px solid #0ea5e9;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌍 Earth Observation Visualizer - NASA Data Explorer</h1>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <h3>Environmental Indicators</h3>
+            <div class="indicators">
+                <div class="indicator-card" onclick="selectIndicator('ndvi', this)">
+                    <div class="indicator-header">
+                        <div class="indicator-icon" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">🍃</div>
+                        <div>
+                            <strong>Vegetation Index</strong><br>
+                            <small>NDVI Analysis</small>
+                        </div>
+                    </div>
+                    <div class="indicator-value">0.65</div>
+                    <div class="indicator-trend trend-up">↗ +2.3%</div>
+                </div>
+
+                <div class="indicator-card" onclick="selectIndicator('glacier', this)">
+                    <div class="indicator-header">
+                        <div class="indicator-icon" style="background: rgba(14, 165, 233, 0.2); color: #0ea5e9;">🏔️</div>
+                        <div>
+                            <strong>Glacial Coverage</strong><br>
+                            <small>Ice Extent</small>
+                        </div>
+                    </div>
+                    <div class="indicator-value">1,250 km²</div>
+                    <div class="indicator-trend trend-down">↘ -15.2%</div>
+                </div>
+
+                <div class="indicator-card" onclick="selectIndicator('urban', this)">
+                    <div class="indicator-header">
+                        <div class="indicator-icon" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">🏙️</div>
+                        <div>
+                            <strong>Urban Expansion</strong><br>
+                            <small>Built-up Areas</small>
+                        </div>
+                    </div>
+                    <div class="indicator-value">450 km²</div>
+                    <div class="indicator-trend trend-up">↗ +28.7%</div>
+                </div>
+
+                <div class="indicator-card" onclick="selectIndicator('temperature', this)">
+                    <div class="indicator-header">
+                        <div class="indicator-icon" style="background: rgba(239, 68, 68, 0.2); color: #ef4444;">🌡️</div>
+                        <div>
+                            <strong>Temperature</strong><br>
+                            <small>Surface Temp</small>
+                        </div>
+                    </div>
+                    <div class="indicator-value">18.5°C</div>
+                    <div class="indicator-trend trend-up">↗ +1.8°C</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="year-info">
+                <div style="color: #0ea5e9; font-size: 0.9rem;">Current Year</div>
+                <div id="current-year" style="font-size: 1.5rem; font-weight: bold;">2020</div>
+            </div>
+
+            <div class="controls">
+                <button class="control-btn" onclick="showComparison()">📊 Compare</button>
+                <button class="control-btn" onclick="showStory()">📖 Story</button>
+                <button class="control-btn" onclick="downloadReport()">📥 Export</button>
+            </div>
+
+            <div class="map-container">
+                <div class="map-info">
+                    <div class="globe-icon">🌍</div>
+                    <h3>Interactive Map</h3>
+                    <p>Timeline: 2000 - 2025</p>
+                    <p style="color: #0ea5e9;">Drag slider to explore time</p>
+                </div>
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Loading data...</p>
+                </div>
+            </div>
+
+            <div class="time-slider">
+                <div class="slider-container">
+                    <div style="color: #0ea5e9;">2000</div>
+                    <input type="range" 
+                           class="slotr" 
+                           min="2000" 
+                           max="2025" 
+                           value="2020" 
+                           oninput="updateYear(this.value)"
+                           onchange="updateMap(this.value)">
+                    <div style="color: #0ea5e9;">2025</div>
+                    <div class="year-display">
+                        <span id="slider-year">2020</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentIndicator = 'ndvi';
+        let isUpdating = false;
+
+        function updateYear(year) {
+            if (isUpdating) return;
+            
+            document.getElementById('current-year').textContent = year;
+            document.getElementById('slider-year').textContent = year;
+            
+            // Update indicators based on year
+            updateIndicators(year);
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+            }, 1000);
+        }
+
+        function updateIndicators(year) {
+            const ndviCard = document.querySelector('[onclick*="ndvi"]');
+            const glacierCard = document.querySelector('[onclick*="glacier"]');
+            const urbanCard = document.querySelector('[onclick*="urban"]');
+            const tempCard = document.querySelector('[onclick*="temperature"]');
+            
+            // Simulate data changes based on year
+            const yearFactor = (year - 2000) / 25;
+            
+            // NDVI (improving over time)
+            const ndviValue = (0.45 + yearFactor * 0.2).toFixed(2);
+            const ndviTrend = yearFactor > 0.5 ? '+3.2%' : '+1.1%';
+            
+            // Glacier (declining over time)
+            const glacierValue = Math.round(1800 - yearFactor * 550);
+            const glacierTrend = yearFactor > 0.3 ? '-18.5%' : '-8.2%';
+            
+            // Urban (expanding over time)
+            const urbanValue = Math.round(120 + yearFactor * 330);
+            const urbanTrend = yearFactor > 0.4 ? '+45.2%' : '+12.8%';
+            
+            // Temperature (warming over time)
+            const tempValue = (16.8 + yearFactor * 2.1).toFixed(1);
+            const tempTrend = yearFactor > 0.5 ? '+2.3°C' : '+0.8°C';
+            
+            ndviCard.querySelector('.indicator-value').textContent = ndviValue;
+            ndviCard.querySelector('.indicator-trend').textContent = '↗ ' + ndviTrend;
+            
+            glacierCard.querySelector('.indicator-value').textContent = `${glacierValue} km²`;
+            glacierCard.querySelector('.indicator-trend').textContent = '↘ ' + glacierTrend.toFixed(1) + '%';
+            
+            urbanCard.querySelector('.indicator-value').textContent = `${urbanValue} km²`;
+            urbanCard.querySelector('.indicator-trend').textContent = '↗ ' + urbanTrend.replace('%', '%');
+            
+            tempCard.querySelector('.indicator-value').textContent = `${tempValue}°C`;
+            tempCard.querySelector('.indicator-trend').textContent = '↗ +' + tempTrend.replace('+', '').replace('°C', '°C');
+        }
+
+        function selectIndicator(indicator, element) {
+            currentIndicator = indicator;
+            
+            // Remove active class from all cards
+            document.querySelectorAll('.indicator-card').forEach(card => {
+                card.style.borderColor = 'rgba(14, 165, 233, 0.3)';
+                card.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+            });
+            
+            // Add active class to selected card
+            element.style.borderColor = '#0ea5e9';
+            element.style.backgroundColor = 'rgba(14, 165, 233, 0.2)';
+            
+            console.log('Selected indicator:', indicator);
+        }
+
+        function showComparison() {
+            alert('🔄 Comparison Tool\n\nCompare data between different time periods:\n• Kathmandu Valley 2000 vs 2025\n• Glacier retreat analysis\n• Urban expansion changes\n• Temperature variations\n\nFeature coming soon!');
+        }
+
+        function showStory() {
+            const year = document.getElementById('current-year').textContent;
+            alert(`📖 Environmental Story for ${year}\n\n🏔️ Glacier Retreat: Himalayan glaciers have lost ${18.5 + (year - 2000) * 0.5}% of their mass since 2000.\n\n🏙️ Urban Growth: Kathmandu Valley urban area has expanded by ${12 + (year - 2000) * 1.5}%.\n\n🌡️ Climate Change: Average temperature has risen by ${0.8 + (year - 2000) * 0.08}°C.\n\n🌱 Our planet is changing. Understanding these changes helps us prepare for the future.`);
+        }
+
+        function downloadReport() {
+            const year = document.getElementById('current-year').textContent;
+            const indicator = currentIndicator;
+            alert(`📥 Download Report\n\nGenerating report for:\n• Year: ${year}\n• Indicator: ${indicator}\n• Format: PDF\n\nReport will include:\n• Map visualization\n• Data charts\n• Environmental analysis\n• Recommendations\n\nReady to download!`);
+        }
+
+        // Initialize
+        selectIndicator('ndvi', document.querySelector('[onclick*="ndvi"]'));
+        updateIndicators(2020);
+    </script>
+</body>
+</html>
